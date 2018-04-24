@@ -8,18 +8,32 @@ using UnityEngine.Networking;
 public class TwitterReader : MonoBehaviour {
 
     [Serializable]
+    class APIKeys
+    {
+        public string consumer_key;
+        public string consumer_secret;
+    }
+
+    [Serializable]
     class AuthResponse
     {
         public string token_type;
         public string access_token;
     }
 
-    public string ConsumerKey, ConsumerSecret;
+    public TextAsset json;
+
+    string ConsumerKey, ConsumerSecret;
 
     string authenticationToken;
 
     // Use this for initialization
     IEnumerator Start () {
+
+        APIKeys keys = JsonUtility.FromJson<APIKeys>(json.text);
+        ConsumerKey = keys.consumer_key;
+        ConsumerSecret = keys.consumer_secret;
+
         using (WWW www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
         {
             yield return www;

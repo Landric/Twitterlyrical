@@ -221,8 +221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7690b950122380b4682917f358dcc1fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConsumerKey: foo
-  ConsumerSecret: bar
+  Key: {fileID: 4900000, guid: 678b579e758223b4aa90168b0ba115d1, type: 3}
+  Secret: {fileID: 4900000, guid: 4a13b4ffed714a3498d8380bd1effb12, type: 3}
 --- !u!4 &461780668
 Transform:
   m_ObjectHideFlags: 0
