@@ -23,6 +23,8 @@ public class TwitterReader : MonoBehaviour {
 
     public TextAsset json;
 
+    public Queue<TweetResponse> tweetQueue;
+
     string ConsumerKey, ConsumerSecret;
 
     string authenticationToken;
@@ -44,7 +46,28 @@ public class TwitterReader : MonoBehaviour {
             else
             {
                 var response = JsonUtility.FromJson<AuthResponse>(www.text);
-                if(response.token_type != "bearer")
+                if (response.token_type != "bearer")
+                {
+                    throw new Exception("Unexpected token type: " + response.token_type);
+                }
+                else
+                {
+                    authenticationToken = response.access_token;
+                }
+            }
+        }
+
+        using (WWW www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
+        {
+            yield return www;
+            if (www.error != null)
+            {
+                Debug.LogError("There was an error sending request: " + www.error);
+            }
+            else
+            {
+                var response = JsonUtility.FromJson<AuthResponse>(www.text);
+                if (response.token_type != "bearer")
                 {
                     throw new Exception("Unexpected token type: " + response.token_type);
                 }
