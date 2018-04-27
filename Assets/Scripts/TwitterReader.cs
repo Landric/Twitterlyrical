@@ -20,23 +20,23 @@ public class TwitterReader : MonoBehaviour {
 
     // Use this for initialization
     IEnumerator Start () {
-        using (WWW www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
+        using (WWW response = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
         {
-            yield return www;
-            if (www.error != null)
+            yield return response;
+            if (response.error != null)
             {
-                Debug.LogError("There was an error sending request: " + www.error);
+                Debug.LogError("There was an error sending request: " + response.error);
             }
             else
             {
-                var response = JsonUtility.FromJson<AuthResponse>(www.text);
-                if(response.token_type != "bearer")
+                var authResponse = JsonUtility.FromJson<AuthResponse>(response.text);
+                if(authResponse.token_type != "bearer")
                 {
-                    throw new Exception("Unexpected token type: " + response.token_type);
+                    throw new Exception("Unexpected token type: " + authResponse.token_type);
                 }
                 else
                 {
-                    authenticationToken = response.access_token;
+                    authenticationToken = authResponse.access_token;
                 }
             }
         }
