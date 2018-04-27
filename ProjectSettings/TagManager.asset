@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 2807568063
+    locked: 0
+  - name: MidGround
+    uniqueID: 3289669737
+    locked: 0
+  - name: Tweets
+    uniqueID: 3348435159
+    locked: 0
+  - name: Foreground
+    uniqueID: 1951190201
+    locked: 0

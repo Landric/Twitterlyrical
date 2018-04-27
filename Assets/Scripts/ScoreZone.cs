@@ -19,9 +19,6 @@ public class ScoreZone : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.name.StartsWith("Tweet"))
-        {
-            Debug.Log(label);
-        }
+
     }
 }
