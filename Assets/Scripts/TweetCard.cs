@@ -21,15 +21,4 @@ public class TweetCard : MonoBehaviour {
         transform.position += (Vector3)Vector2.down * Speed * Time.fixedDeltaTime;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        foreach (var collider in Physics2D.OverlapBoxAll(transform.position, transform.lossyScale, 0f))
-        {
-            Debug.Log(collider.gameObject.name);
-        }
-
-        Debug.Log("VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV");
-    }
-
-
 }

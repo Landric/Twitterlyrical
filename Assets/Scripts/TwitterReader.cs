@@ -8,14 +8,14 @@ using UnityEngine.Networking;
 public class TwitterReader : MonoBehaviour {
 
     [Serializable]
-    class APIKeys
+    struct APIKeys
     {
         public string consumer_key;
         public string consumer_secret;
     }
 
     [Serializable]
-    class AuthResponse
+    struct AuthResponse
     {
         public string token_type;
         public string access_token;
@@ -36,16 +36,18 @@ public class TwitterReader : MonoBehaviour {
         ConsumerKey = keys.consumer_key;
         ConsumerSecret = keys.consumer_secret;
 
-        using (WWW www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
+        using (UnityWebRequest www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
         {
-            yield return www;
+            yield return www.SendWebRequest();
+            
             if (www.error != null)
             {
                 Debug.LogError("There was an error sending request: " + www.error);
+                Debug.LogError(www.downloadHandler.text);
             }
             else
             {
-                var response = JsonUtility.FromJson<AuthResponse>(www.text);
+                var response = JsonUtility.FromJson<AuthResponse>(www.downloadHandler.text);
                 if (response.token_type != "bearer")
                 {
                     throw new Exception("Unexpected token type: " + response.token_type);
@@ -56,28 +58,6 @@ public class TwitterReader : MonoBehaviour {
                 }
             }
         }
-
-        using (WWW www = ObtainBearerToken(EncodeKeyAndSecret(ConsumerKey, ConsumerSecret)))
-        {
-            yield return www;
-            if (www.error != null)
-            {
-                Debug.LogError("There was an error sending request: " + www.error);
-            }
-            else
-            {
-                var response = JsonUtility.FromJson<AuthResponse>(www.text);
-                if (response.token_type != "bearer")
-                {
-                    throw new Exception("Unexpected token type: " + response.token_type);
-                }
-                else
-                {
-                    authenticationToken = response.access_token;
-                }
-            }
-        }
-
     }
 	
 	// Update is called once per frame
@@ -96,15 +76,32 @@ public class TwitterReader : MonoBehaviour {
     {
         return Base64Encode(Uri.EscapeDataString(key) + ":" + Uri.EscapeDataString(secret));
     }
-    
 
-    public WWW ObtainBearerToken(string token)
+
+    UnityWebRequest ObtainBearerToken(string token)
     {
-        var headers = new Dictionary<string, string>();
+        WWWForm postData = new WWWForm();
+        postData.AddField("grant_type", "client_credentials");
+
+        UnityWebRequest request = UnityWebRequest.Post("https://api.twitter.com/oauth2/token", postData);
+
+        request.SetRequestHeader("Authorization", "Basic " + token);
+        request.SetRequestHeader("Content-Type", "application / x - www - form - urlencoded; charset = UTF - 8");
+
+        return request;
+    }
+
+    /*
+    WWW ObtainBearerToken(string token)
+    {
+        WWWForm parameters = new WWWForm();
+        parameters.AddField("grant_type", "client_credentials");
+
+        var headers = parameters.headers;
         headers["Authorization"] = "Basic " + token;
         headers["Content-Type"] = "application / x - www - form - urlencoded; charset = UTF - 8";
 
-        var www = new WWW("https://api.twitter.com/oauth2/token", Encoding.UTF8.GetBytes("grant_type = client_credentials"), headers);
-        return www;
+        return new WWW("https://api.twitter.com/oauth2/token", parameters.data, headers);
     }
+    */
 }
